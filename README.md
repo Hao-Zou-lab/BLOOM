@@ -1,18 +1,18 @@
-# \# BLOOM <img src="man/figures/logo.png" align="right" height="138" />
+<p align="center">
+  <img src="man/figures/logo.png" alt="BLOOM logo" width="200"/>
+</p>
 
-
-
-\##BLOOM
+# BLOOM
 
 1.BLOOM,R version 4.1.2(This version or any version higher than it is acceptable).
 
 2.BLOOM can transfers plant phenotype-associated signals from bulk RNA-seq to the single-cell level.
 
-3.If you need all.count.txt, mesophyll\_cells\_all.rds, please download the files in inst/exdata in the BLOOM\_0.1.0.tar.gz package to obtain the data you need.
+3.If you need all.count.txt, mesophyll_cells_all.rds, please download the files in inst/exdata in the BLOOM_0.1.0.tar.gz package to obtain the data you need.
 
 
 
-\##Step1: installation
+## Step1: installation
 
 1.install 'Seurat','pls', 'MASS','ggplot2','readxl','tcltk','wrMisc' R package from Cran.
 
@@ -20,19 +20,15 @@
 
 3.Installing scSTAR from github:
 
-&nbsp;	i. We can install scSCTAR2 by downloading the installation file (BLOOM\_0.1.0.tar.gz) from the Assets page of Releases and installing it:
+&nbsp;	i. We can install scSCTAR2 by downloading the installation file (BLOOM_0.1.0.tar.gz) from the Assets page of Releases and installing it:
 
-&nbsp;	```r
+        install.packages("scSTAR2_0.1.1.tar.gz", repos = NULL, type="source")
 
-&nbsp;	install.packages("scSTAR2\_0.1.1.tar.gz", repos = NULL, type="source")
-
-&nbsp;	```
-
-&nbsp;	ii. Another method is to download the file "BLOOM\_0.1.0.tar.gz" and install the package from a local path.
+&nbsp;	ii. Another method is to download the file "BLOOM_0.1.0.tar.gz" and install the package from a local path.
 
 
 
-\##Step2: run BLOOM
+## Step2: run BLOOM
 
 ```r
 
@@ -65,69 +61,69 @@ library(circlize)
 library(monocle) 
 ```
 
-\###load scRNA-seq data
+### load scRNA-seq data
 
 ```r
 
 setwd("./your path")
 
-mesophyll\_cells <- readRDS("./mesophyll\_cells\_all.rds")
+mesophyll_cells <- readRDS("./mesophyll_cells_all.rds")
 
 ```
 
-\### load bulk RNA-seq data with phenotype information
+### load bulk RNA-seq data with phenotype information
 
 ```r
 
-data\_bulk = read.table("./all.count.txt", sep = "\\t", header = T)
+data_bulk = read.table("./all.count.txt", sep = "\\t", header = T)
 
-geneList\_bulk = rownames(data\_bulk)
+geneList_bulk = rownames(data_bulk)
 
-data\_matrix\_bulk <- as.matrix(data\_bulk)
+data_matrix_bulk <- as.matrix(data_bulk)
 
-data\_matrix\_bulk <- matrix(as.numeric(data\_matrix\_bulk), nrow = nrow(data\_matrix\_bulk))
+data_matrix_bulk <- matrix(as.numeric(data_matrix_bulk), nrow = nrow(data_matrix_bulk))
 
-rownames(data\_matrix\_bulk) <- geneList\_bulk
+rownames(data_matrix_bulk) <- geneList_bulk
 
-colnames(data\_matrix\_bulk) <- colnames(data\_bulk)
+colnames(data_matrix_bulk) <- colnames(data_bulk)
 
-data\_matrix\_bulk <- data\_matrix\_bulk\[!is.na(rownames(data\_matrix\_bulk)), ]
+data_matrix_bulk <- data_matrix_bulk[!is.na(rownames(data_matrix_bulk)), ]
 
-data\_matrix\_bulk <- log2(data\_matrix\_bulk + 1)
+data_matrix_bulk <- log2(data_matrix_bulk + 1)
 
 ```
 
-\###keep the shared genes between datasets
+### keep the shared genes between datasets
 
 ```r
 
 location <- c(rep('TL0', 3), rep('TL1', 3))
 
-data\_matrix\_sc <- as.matrix(mesophyll\_cells@assays$RNA@counts)
+data_matrix_sc <- as.matrix(mesophyll_cells@assays$RNA@counts)
 
-geneList\_sc = rownames(data\_matrix\_sc)
+geneList_sc = rownames(data_matrix_sc)
 
-rownames(data\_matrix\_sc) <- geneList\_sc
+rownames(data_matrix_sc) <- geneList_sc
 
-colnames(data\_matrix\_sc) <- colnames(mesophyll\_cells)
+colnames(data_matrix_sc) <- colnames(mesophyll_cells)
 
-geneList <- intersect(geneList\_bulk, geneList\_sc)
+geneList <- intersect(geneList_bulk, geneList_sc)
 
-ia <- match(geneList, geneList\_bulk)
+ia <- match(geneList, geneList_bulk)
 
-ib <- match(geneList, geneList\_sc)
+ib <- match(geneList, geneList_sc)
 
-data\_matrix\_bulk <- data\_matrix\_bulk\[ia, ]
+data_matrix_bulk <- data_matrix_bulk[ia, ]
 
-data\_matrix\_sc <- data\_matrix\_sc\[ib, ]
+data_matrix_sc <- data_matrix_sc[ib, ]
 
-data\_matrix\_sc <- log2(data\_matrix\_sc + 1)
+data_matrix_sc <- log2(data_matrix_sc + 1)
 
-geneList\_OGFSC\_share <- geneList
+geneList_OGFSC_share <- geneList
 
 ```
 
-\###PLS1 projection
+### PLS1 projection
 
 ```r
 
@@ -137,41 +133,41 @@ minNC <- 2
 
 PLScomp <- 2
 
-MODEL <- PLSconstruct(t(data\_matrix\_sc), t(data\_matrix\_bulk), 'mc', NCV, PLScomp, minNC)
+MODEL <- PLSconstruct(t(data_matrix_sc), t(data_matrix_bulk), 'mc', NCV, PLScomp, minNC)
 
 ```
 
-\###reconstruct scRNA-seq data
+### reconstruct scRNA-seq data
 
 ```r
 
-temp <- t(data\_matrix\_sc)
+temp <- t(data_matrix_sc)
 
-temp = temp - matrix(1, dim(temp)\[1], 1) %\*% MODEL$mu
+temp = temp - matrix(1, dim(temp)\[1], 1) %*% MODEL$mu
 
-temp = temp - temp %\*% MODEL$XL %\*% ginv(MODEL$XL)
+temp = temp - temp %*% MODEL$XL %*% ginv(MODEL$XL)
 
-temp = temp + matrix(1, dim(temp)\[1], 1) %\*% MODEL$mu
+temp = temp + matrix(1, dim(temp)\[1], 1) %*% MODEL$mu
 
-S\_sc <- t(temp)
+S_sc <- t(temp)
 
 ```
 
-\###reconstruct bulk
+### reconstruct bulk
 
 ```r
-temp = t(data\_matrix\_bulk)
+temp = t(data_matrix_bulk)
 
-temp = temp - matrix(1, dim(temp)\[1], 1) %\*% MODEL$mu
+temp = temp - matrix(1, dim(temp)\[1], 1) %*% MODEL$mu
 
-temp = temp - temp %\*% MODEL$XL %\*% ginv(MODEL$XL)
+temp = temp - temp %*% MODEL$XL %*% ginv(MODEL$XL)
 
-temp = temp + matrix(1, dim(temp)\[1], 1) %\*% MODEL$mu
+temp = temp + matrix(1, dim(temp)\[1], 1) %*% MODEL$mu
 
-S\_bulk = t(temp)
+S_bulk = t(temp)
 ```
 
-\###meta prediction model training
+### meta prediction model training
 
 ```r
 
@@ -179,98 +175,98 @@ PLScomp2 = 3 # by default, 3. Might be slightly adjusted to 4 or 5
 
 FCV = 3
 
-data\_1 = S\_bulk\[, location == 'TL0']
+data_1 = S_bulk[, location == 'TL0']
 
-data\_2 = S\_bulk\[, location == 'TL1']
+data_2 = S_bulk[, location == 'TL1']
 ```
 
-\###train discriminatory model on bulk data
+### train discriminatory model on bulk data
 
 ```r
 
-MODEL <- PLSconstruct(t(data\_1), t(data\_2), 'mc', NCV, PLScomp2, minNC)
+MODEL <- PLSconstruct(t(data_1), t(data_2), 'mc', NCV, PLScomp2, minNC)
 ```
 
-\###apply the model on SC data
+### apply the model on SC data
 
 ```r
 
-temp <- t(S\_sc)
+temp <- t(S_sc)
 
-temp = temp - matrix(1, dim(temp)\[1], 1) %\*% MODEL$mu
+temp = temp - matrix(1, dim(temp)\[1], 1) %*% MODEL$mu
 
-temp = temp %\*% MODEL$XL %\*% ginv(MODEL$XL)
+temp = temp %*% MODEL$XL %*% ginv(MODEL$XL)
 
-temp = temp + matrix(1, dim(temp)\[1], 1) %\*% MODEL$mu
+temp = temp + matrix(1, dim(temp)\[1], 1) %*% MODEL$mu
 
-SS\_sc <- t(temp)
+SS_sc <- t(temp)
 ```
 
-\###save results
+### save results
 
 ```r
-geneList\_OGFSC\_share <- as.list(geneList\_OGFSC\_share)
+geneList_OGFSC_share <- as.list(geneList_OGFSC_share)
 
 location <- as.list(location)
 
-BLOOM\_mesophyll <- list(
+BLOOM_mesophyll <- list(
 
-&nbsp; data\_matrix\_sc = data\_matrix\_sc, 
+data_matrix_sc = data_matrix_sc, 
 
-&nbsp; data\_matrix\_bulk = data\_matrix\_bulk, 
+data_matrix_bulk = data_matrix_bulk, 
 
-&nbsp; S\_bulk = S\_bulk, 
+S_bulk = S_bulk, 
 
-&nbsp; S\_sc = S\_sc, 
+S_sc = S_sc, 
 
-&nbsp; SS\_sc = SS\_sc, 
+SS_sc = SS_sc, 
 
-&nbsp; geneList\_OGFSC\_share = geneList\_OGFSC\_share, 
+geneList_OGFSC_share = geneList_OGFSC_share, 
 
-&nbsp; location = location)
+location = location)
 
-names(BLOOM\_mesophyll) <- c('data\_matrix\_sc', 'data\_matrix\_bulk', 'S\_bulk', 'S\_sc', 'SS\_sc', 'geneList\_OGFSC\_share', 'location')
+names(BLOOM_mesophyll) <- c('data_matrix_sc', 'data_matrix_bulk', 'S_bulk', 'S_sc', 'SS_sc', 'geneList_OGFSC_share', 'location')
 
-saveRDS(BLOOM\_mesophyll, file = './BLOOM\_sc.rds')
+saveRDS(BLOOM_mesophyll, file = './BLOOM_sc.rds')
 
 ```
 
-\###load data
+### load data
 
 ```r
 
-data <- readRDS("./BLOOM\_sc.rds")
+data <- readRDS("./BLOOM_sc.rds")
 
-SS\_sc <- data$SS\_sc
+SS_sc <- data$SS_sc
 
-SS\_sc <- matrix(as.numeric(SS\_sc), nrow = nrow(SS\_sc), dimnames = dimnames(SS\_sc))
+SS_sc <- matrix(as.numeric(SS_sc), nrow = nrow(SS_sc), dimnames = dimnames(SS_sc))
 
-genelist <- unlist(data$geneList\_OGFSC\_share)
+genelist <- unlist(data$geneList_OGFSC_share)
 
-rownames(SS\_sc) <- genelist
+rownames(SS_sc) <- genelist
 
-colnames(SS\_sc) <- colnames(data\_matrix\_sc)
+colnames(SS_sc) <- colnames(data_matrix_sc)
 
-data\_matrix\_sc <- data$data\_matrix\_sc
+data_matrix_sc <- data$data_matrix_sc
 
-data\_matrix\_sc <- matrix(as.numeric(data\_matrix\_sc), nrow = nrow(data\_matrix\_sc), dimnames = dimnames(data\_matrix\_sc))
+data_matrix_sc <- matrix(as.numeric(data_matrix_sc), nrow = nrow(data_matrix_sc), dimnames = dimnames(data_matrix_sc))
 
-rownames(data\_matrix\_sc) <- genelist
+rownames(data_matrix_sc) <- genelist
 
-colnames(data\_matrix\_sc) <- paste0("Cell", 1:ncol(data\_matrix\_sc))
+colnames(data_matrix_sc) <- paste0("Cell", 1:ncol(data_matrix_sc))
 
-S\_sc <- data$S\_sc
+S_sc <- data$S_sc
 
-S\_sc <- matrix(as.numeric(S\_sc), nrow = nrow(S\_sc), dimnames = dimnames(S\_sc))
+S_sc <- matrix(as.numeric(S_sc), nrow = nrow(S_sc), dimnames = dimnames(S_sc))
 
-rownames(S\_sc) <- genelist
+rownames(S_sc) <- genelist
 ```
 
-\###clustering and identify marker genes of each cluster
+### clustering and identify marker genes of each cluster
 
 ```r
 
-Integrated <- CreateSeuratObject(counts = SS\_sc, project = "Integrated", min.cells = 0, min.features = 0)
+Integrated <- CreateSeuratObject(counts = SS_sc, project = "Integrated", min.cells = 0, min.features = 0)
 
 Integrated <- NormalizeData(Integrated, verbose = FALSE)
 
@@ -286,15 +282,15 @@ Integrated <- FindNeighbors(Integrated, reduction = "pca", dims = 1:20)
 
 Integrated <- FindClusters(Integrated, resolution = 0.3)
 
-n <- length(unique(Integrated$seurat\_clusters)) - 1
+n <- length(unique(Integrated$seurat_clusters)) - 1
 
-scS\_cluster <- paste0('scS\_', Integrated$seurat\_clusters)
+scS_cluster <- paste0('scS_', Integrated$seurat_clusters)
 
 Integrated.markers <- FindAllMarkers(Integrated, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0)
 
-markers\_filtered <- Integrated.markers %>% filter(p\_val\_adj < 0.05)
+markers_filtered <- Integrated.markers %>% filter(p_val_adj < 0.05)
 
-write.csv(markers\_filtered, "./MarkerGenesByCluster\_BLOOM.csv", row.names = FALSE)
+write.csv(markers_filtered, "./MarkerGenesByCluster_BLOOM.csv", row.names = FALSE)
 
 library(tidyverse)
 
@@ -304,87 +300,87 @@ library(ggplot2)
 
 data1 <- Integrated@meta.data
 
-table(data1$seurat\_clusters)
+table(data1$seurat_clusters)
 
-data2 <- Integrated@reductions\[\["tsne"]]@cell.embeddings%>%as.data.frame()
+data2 <- Integrated@reductions[["tsne"]]@cell.embeddings%>%as.data.frame()
 
-mydata <- merge(data2,data1\[,c(1,5,ncol(data1))],by=0,all.x = T)%>%  
+mydata <- merge(data2,data1[,c(1,5,ncol(data1))],by=0,all.x = T)%>%  
 
-&nbsp; column\_to\_rownames("Row.names")
+column_to_rownames("Row.names")
 
-mydata$seurat\_clusters <- paste0("BM", mydata$seurat\_clusters)
+mydata$seurat_clusters <- paste0("BM", mydata$seurat_clusters)
 
-sort(unique(mydata$seurat\_clusters))
+sort(unique(mydata$seurat_clusters))
 
 cellcolors <- c("#fb9e9a","#d688a1","#a7789f","#e0845d","#0075c3","#47c4f1","#008eb9","#c06967","#798945")
 
-ggplot(data = mydata, aes(tSNE\_1, tSNE\_2, fill = seurat\_clusters, colour = seurat\_clusters)) +
+ggplot(data = mydata, aes(tSNE_1, tSNE_2, fill = seurat_clusters, colour = seurat_clusters)) +
 
-&nbsp; geom\_point(shape = 21, size = 1.5, alpha = 0.15) +   scale\_fill\_manual(values = cellcolors) +
+geom_point(shape = 21, size = 1.5, alpha = 0.15) +  scale_fill_manual(values = cellcolors) +
 
-&nbsp; scale\_colour\_manual(values = cellcolors) +
+scale_colour_manual(values = cellcolors) +
 
-&nbsp; theme\_bw(base\_rect\_size = 1) +   
+theme_bw(base_rect_size = 1) +   
 
-&nbsp; theme(
+theme(
 
-&nbsp;   axis.title = element\_text(size = 15, family = "sans", face = "bold"),     
+axis.title = element_text(size = 15, family = "sans", face = "bold"),     
 
-&nbsp;   axis.text = element\_text(size = 12, family = "sans", face = "bold"),      
+axis.text = element_text(size = 12, family = "sans", face = "bold"),      
 
-&nbsp;   panel.grid = element\_blank(),
+panel.grid = element_blank(),
 
-&nbsp;   legend.title = element\_blank(),
+legend.title = element_blank(),
 
-&nbsp;   legend.text = element\_text(size = 12, family = "sans", face = "bold"),    
+legend.text = element_text(size = 12, family = "sans", face = "bold"),    
 
-&nbsp;   legend.position = "right",
+legend.position = "right",
 
-&nbsp;   legend.key.height = unit(1, 'cm'),
+legend.key.height = unit(1, 'cm'),
 
-&nbsp;   legend.key.width = unit(0.5, 'cm'),
+legend.key.width = unit(0.5, 'cm'),
 
-&nbsp;   plot.title = element\_text(size = 16, face = "bold", hjust = 0.5, family = "sans")    
+plot.title = element_text(size = 16, face = "bold", hjust = 0.5, family = "sans")    
 
-&nbsp; ) +
+) +
 
-&nbsp; ggtitle("Mesophyll BM Cluster") +
+ggtitle("Mesophyll BM Cluster") +
 
-&nbsp; guides(fill = guide\_legend(override.aes = list(size = 3, alpha = 0.8)))
+guides(fill = guide_legend(override.aes = list(size = 3, alpha = 0.8)))
 
-ggsave("./Mesophyll\_BM\_cluster.tiff", height = 5,width = 6)
+ggsave("./Mesophyll_BM_cluster.tiff", height = 5,width = 6)
 ```
 
-\### load bulk data
+### load bulk data
 
 ```r
-data\_matrix\_bulk <- data$data\_matrix\_bulk
+data_matrix_bulk <- data$data_matrix_bulk
 
-data\_matrix\_bulk <- matrix(as.numeric(data\_matrix\_bulk), nrow = nrow(data\_matrix\_bulk), dimnames = dimnames(data\_matrix\_bulk))
+data_matrix_bulk <- matrix(as.numeric(data_matrix_bulk), nrow = nrow(data_matrix_bulk), dimnames = dimnames(data_matrix_bulk))
 
-genelist <- unlist(data$geneList\_OGFSC\_share)
+genelist <- unlist(data$geneList_OGFSC_share)
 
-rownames(data\_matrix\_bulk) <- genelist
+rownames(data_matrix_bulk) <- genelist
 
-colnames(data\_matrix\_bulk) <- paste0("Patient", c(1:dim(data\_matrix\_bulk)\[2]))
+colnames(data_matrix_bulk) <- paste0("Patient", c(1:dim(data_matrix_bulk)[2]))
 
 ```
 
-\###phenotype data
+### phenotype data
 
 ```r
 
 location <- unlist(data$location)
 ```
 
-\###load gene markers
+### load gene markers
 
 ```r
 markers <- read.csv("./MarkerGenesByCluster\_BLOOM.csv")
 
 ```
 
-\###Processing of gene marker data may involve extracting related genes by cluster
+### Processing of gene marker data may involve extracting related genes by cluster
 
 This part of the code involves selecting specific genes from the clustering information for subsequent analysis.
 
@@ -392,19 +388,19 @@ This part of the code involves selecting specific genes from the clustering info
 
 clusters <- markers$cluster
 
-clusters\_uni <- sort(unique(clusters))
+clusters_uni <- sort(unique(clusters))
 
-FC <- markers$avg\_log2FC
+FC <- markers$avg_log2FC
 
 selectedGenes <- list()
 
-for (i in clusters\_uni) {
+for (i in clusters_uni) {
 
-&nbsp; idx <- which(clusters == i)
+idx <- which(clusters == i)
 
-&nbsp; x <- sort(markers$avg\_log2FC\[idx], decreasing = TRUE, index.return = TRUE)
+x <- sort(markers$avg_log2FC[idx], decreasing = TRUE, index.return = TRUE)
 
-&nbsp; selectedGenes\[\[paste0("cluster", i)]] <- as.vector(markers$gene\[idx\[x$ix]])
+selectedGenes[[paste0("cluster", i)]] <- as.vector(markers$gene[idx[x$ix]])
 
 }
 ```
@@ -412,11 +408,11 @@ for (i in clusters\_uni) {
 This part evaluates genetic similarity between each cluster and bulk data with different meta information.
 
 ```r
-buffer <- data$S\_bulk
+buffer <- data$S_bulk
 
 buffer <- matrix(as.numeric(buffer), nrow = nrow(buffer), dimnames = dimnames(buffer))
 
-genelist <- unlist(data$geneList\_OGFSC\_share)
+genelist <- unlist(data$geneList_OGFSC_share)
 
 rownames(buffer) <- genelist
 
@@ -432,34 +428,34 @@ corrMat <- list()
 
 for (i in 0:n) {
 
-&nbsp; cluster\_name <- paste0("scS\_", i)
+cluster_name <- paste0("scS_", i)
 
-&nbsp; X <- SS\_sc\[, which(scS\_cluster == cluster\_name)]
+X <- SS_sc[, which(scS_cluster == cluster_name)]
 
-&nbsp; selected\_genes <- selectedGenes\[\[paste0("cluster", i)]]\[1:ngenes]
+selected_genes <- selectedGenes[[paste0("cluster", i)]][1:ngenes]
 
-&nbsp; common\_genes <- intersect(rownames(buffer), selected\_genes)
+common_genes <- intersect(rownames(buffer), selected_genes)
 
-&nbsp; if (length(common\_genes) < 10) {
+if (length(common_genes) < 10) {
 
-&nbsp;   cat("Skip cluster", i, "due to too few genes.\\n")
+cat("Skip cluster", i, "due to too few genes.\\n")
 
-&nbsp;   next
-
-&nbsp; }
-
-&nbsp; Cor <- cor(buffer\[common\_genes, ], X\[common\_genes, ], method = "pearson")
-
-&nbsp; corrMat\_Epidermal\[\[paste0("Cor", i)]] <- Cor
+next
 
 }
 
-corrMat\[\["location"]] <- as.list(location)
+Cor <- cor(buffer[common_genes, ], X[common_genes, ], method = "pearson")
+
+corrMat[[paste0("Cor", i)]] <- Cor
+
+}
+
+corrMat[["location"]] <- as.list(location)
 
 saveRDS(corrMat, file = './corrMat.rds')
 ```
 
-\###This code mainly implements the OPLS-DA (Partial Least Squares Discriminant Analysis) process
+### This code mainly implements the OPLS-DA (Partial Least Squares Discriminant Analysis) process
 
 ```r
 
@@ -467,35 +463,35 @@ data <- readRDS("./corrMat.rds")
 
 pattern <- do.call(rbind, data$location)
 
-idx\_AC <- which(pattern == "TL0", arr.ind = TRUE)
+idx_AC <- which(pattern == "TL0", arr.ind = TRUE)
 
-idx\_SA <- which(pattern == "TL1", arr.ind = TRUE)
+idx_SA <- which(pattern == "TL1", arr.ind = TRUE)
 
-cor\_names <- names(data)\[grepl("^Cor\\\\d+$", names(data))]
+cor_names <- names(data)[grepl("^Cor\\\\d+$", names(data))]
 
-cor\_indices <- as.integer(gsub("Cor", "", cor\_names))
+cor_indices <- as.integer(gsub("Cor", "", cor_names))
 
-for (i in cor\_indices) {
+for (i in cor_indices) {
 
-&nbsp; gc()
+gc()
 
-&nbsp; CorMat <- data\[\[paste0("Cor", i)]]
+CorMat <- data[[paste0("Cor", i)]]
 
-&nbsp; data1 <- CorMat\[idx\_AC\[, 1], ]
+data1 <- CorMat[idx_AC[, 1], ]
 
-&nbsp; data2 <- CorMat\[idx\_SA\[, 1], ]
+data2 <- CorMat[idx_SA[, 1], ]
 
-&nbsp; cellindex <- matrix(seq(1, ncol(CorMat)), nrow = 1)
+cellindex <- matrix(seq(1, ncol(CorMat)), nrow = 1)
 
-&nbsp; Sys.sleep(1) 
+Sys.sleep(1) 
 
-&nbsp; set.seed(123)
+set.seed(123)
 
-&nbsp; model <- OPLSDA(data1, data2,cellindex,nrcv=3)
+model <- OPLSDA(data1, data2,cellindex,nrcv=3)
 
-&nbsp; ggsave(file = paste0('C', i, '.tiff'), dpi = 300, compression = 'lzw', width = 6, height = 5, units = "in")
+ggsave(file = paste0('C', i, '.tiff'), dpi = 300, compression = 'lzw', width = 6, height = 5, units = "in")
 
-&nbsp; dev.off()
+dev.off()
 
 }
 ```
