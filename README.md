@@ -23,9 +23,7 @@
 &nbsp;	i. We can install scSCTAR2 by downloading the installation file (BLOOM_0.1.0.tar.gz) from the Assets page of Releases and installing it:
 
         ```r
-
         install.packages("scSTAR2_0.1.1.tar.gz", repos = NULL, type="source")
-
         ```
 
 &nbsp;	ii. Another method is to download the file "BLOOM_0.1.0.tar.gz" and install the package from a local path.
