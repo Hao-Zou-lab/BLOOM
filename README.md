@@ -1,4 +1,6 @@
-# BLOOM <img src="man/figures/logo.png" align="right" height="138" />
+<p align="center">
+  <img src="man/figures/logo.png" alt="BLOOM logo" width="200"/>
+</p>
 
 # BLOOM
 
