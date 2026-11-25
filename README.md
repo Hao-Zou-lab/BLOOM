@@ -18,14 +18,19 @@
 
 2.installing STutility from github: dowaload the file 'STutility-1.1.1tar.gz'/ 'STutility-1.1.1.zip'and install the package from local path.
 
-3.Installing scSTAR from github:
+3.Installing BLOOM:
 
-&nbsp;	i. We can install scSCTAR2 by downloading the installation file (BLOOM_0.1.0.tar.gz) from the Assets page of Releases and installing it:
+Download `BLOOM_0.1.0.tar.gz` from the **Assets** section of the
+[BLOOM Releases page](https://github.com/Hao-Zou-lab/BLOOM/releases).
+Save the file in your R working directory, then run:
 
-        install.packages("scSTAR2_0.1.1.tar.gz", repos = NULL, type="source")
+```r
+install.packages("BLOOM_0.1.1.tar.gz", repos = NULL, type = "source")
+library(BLOOM)
+```
 
-&nbsp;	ii. Another method is to download the file "BLOOM_0.1.0.tar.gz" and install the package from a local path.
-
+If you saved the file elsewhere, replace the filename in `install.packages()`
+with its full path.
 
 
 ## Step2: run BLOOM
