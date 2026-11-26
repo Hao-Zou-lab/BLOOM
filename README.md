@@ -8,29 +8,28 @@
 
 2.BLOOM can transfers plant phenotype-associated signals from bulk RNA-seq to the single-cell level.
 
-3.If you need all.count.txt, mesophyll_cells_all.rds, please download the files in inst/exdata in the BLOOM_0.1.0.tar.gz package to obtain the data you need.
+3.The example files `all.count.txt` and `mesophyll_cells_all.rds` are included
+in `inst/extdata` inside
+[BLOOM_0.1.1.tar.gz](https://github.com/Hao-Zou-lab/BLOOM/releases/download/v0.1.1/BLOOM_0.1.1.tar.gz).
+Extract both files to your R working directory before running the tutorial.
 
 
 
 ## Step1: installation
 
-1.install 'Seurat','pls', 'MASS','ggplot2','readxl','tcltk','wrMisc' R package from Cran.
+1.install 'Seurat','pls', 'MASS','ggplot2','readxl','tcltk','wrMisc', 'tidyverse' R package from Cran.
 
-2.installing STutility from github: dowaload the file 'STutility-1.1.1tar.gz'/ 'STutility-1.1.1.zip'and install the package from local path.
+2.Installing BLOOM:
 
-3.Installing BLOOM:
-
-Download `BLOOM_0.1.0.tar.gz` from the **Assets** section of the
-[BLOOM Releases page](https://github.com/Hao-Zou-lab/BLOOM/releases).
-Save the file in your R working directory, then run:
+Download [BLOOM_0.1.1.tar.gz](https://github.com/Hao-Zou-lab/BLOOM/releases/download/v0.1.1/BLOOM_0.1.1.tar.gz)
+and save it in your R working directory. Then run:
 
 ```r
 install.packages("BLOOM_0.1.1.tar.gz", repos = NULL, type = "source")
 library(BLOOM)
 ```
 
-If you saved the file elsewhere, replace the filename in `install.packages()`
-with its full path.
+If you saved the file elsewhere, pass its full path to `install.packages()`.
 
 
 ## Step2: run BLOOM
@@ -55,15 +54,11 @@ library(readxl)
 
 library(tcltk)
 
-library(STutility)
-
 library(wrMisc)
 
-library(scSTAR2)
+library(BLOOM)
 
 library(circlize)
-
-library(monocle) 
 ```
 
 ### load scRNA-seq data
@@ -80,7 +75,7 @@ mesophyll_cells <- readRDS("./mesophyll_cells_all.rds")
 
 ```r
 
-data_bulk = read.table("./all.count.txt", sep = "\\t", header = T)
+data_bulk = read.table("./all.count.txt", sep = "\t", header = T)
 
 geneList_bulk = rownames(data_bulk)
 
@@ -148,11 +143,11 @@ MODEL <- PLSconstruct(t(data_matrix_sc), t(data_matrix_bulk), 'mc', NCV, PLScomp
 
 temp <- t(data_matrix_sc)
 
-temp = temp - matrix(1, dim(temp)\[1], 1) %*% MODEL$mu
+temp = temp - matrix(1, dim(temp)[1], 1) %*% MODEL$mu
 
 temp = temp - temp %*% MODEL$XL %*% ginv(MODEL$XL)
 
-temp = temp + matrix(1, dim(temp)\[1], 1) %*% MODEL$mu
+temp = temp + matrix(1, dim(temp)[1], 1) %*% MODEL$mu
 
 S_sc <- t(temp)
 
@@ -163,11 +158,11 @@ S_sc <- t(temp)
 ```r
 temp = t(data_matrix_bulk)
 
-temp = temp - matrix(1, dim(temp)\[1], 1) %*% MODEL$mu
+temp = temp - matrix(1, dim(temp)[1], 1) %*% MODEL$mu
 
 temp = temp - temp %*% MODEL$XL %*% ginv(MODEL$XL)
 
-temp = temp + matrix(1, dim(temp)\[1], 1) %*% MODEL$mu
+temp = temp + matrix(1, dim(temp)[1], 1) %*% MODEL$mu
 
 S_bulk = t(temp)
 ```
@@ -198,11 +193,11 @@ MODEL <- PLSconstruct(t(data_1), t(data_2), 'mc', NCV, PLScomp2, minNC)
 
 temp <- t(S_sc)
 
-temp = temp - matrix(1, dim(temp)\[1], 1) %*% MODEL$mu
+temp = temp - matrix(1, dim(temp)[1], 1) %*% MODEL$mu
 
 temp = temp %*% MODEL$XL %*% ginv(MODEL$XL)
 
-temp = temp + matrix(1, dim(temp)\[1], 1) %*% MODEL$mu
+temp = temp + matrix(1, dim(temp)[1], 1) %*% MODEL$mu
 
 SS_sc <- t(temp)
 ```
@@ -293,7 +288,7 @@ scS_cluster <- paste0('scS_', Integrated$seurat_clusters)
 
 Integrated.markers <- FindAllMarkers(Integrated, only.pos = TRUE, min.pct = 0.25, logfc.threshold = 0)
 
-markers_filtered <- Integrated.markers %>% filter(p_val_adj < 0.05)
+markers_filtered <- dplyr::filter(Integrated.markers, p_val_adj < 0.05)
 
 write.csv(markers_filtered, "./MarkerGenesByCluster_BLOOM.csv", row.names = FALSE)
 
@@ -381,7 +376,7 @@ location <- unlist(data$location)
 ### load gene markers
 
 ```r
-markers <- read.csv("./MarkerGenesByCluster\_BLOOM.csv")
+markers <- read.csv("./MarkerGenesByCluster_BLOOM.csv")
 
 ```
 
@@ -472,7 +467,7 @@ idx_AC <- which(pattern == "TL0", arr.ind = TRUE)
 
 idx_SA <- which(pattern == "TL1", arr.ind = TRUE)
 
-cor_names <- names(data)[grepl("^Cor\\\\d+$", names(data))]
+cor_names <- names(data)[grepl("^Cor\\d+$", names(data))]
 
 cor_indices <- as.integer(gsub("Cor", "", cor_names))
 
