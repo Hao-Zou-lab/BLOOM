@@ -17,7 +17,15 @@ Extract both files to your R working directory before running the tutorial.
 
 ## Step1: installation
 
-1.install 'Seurat','pls', 'MASS','ggplot2','readxl','tcltk','wrMisc', 'tidyverse' R package from Cran.
+1.Install dependencies
+
+Install the CRAN packages used by BLOOM and this tutorial:
+
+```r
+install.packages(c("Seurat", "pls", "MASS", "ggplot2", "readxl", "tidyverse"))
+```
+
+BLOOM 0.1.1 requires ggplot2 3.4.0 or later.
 
 2.Installing BLOOM:
 
@@ -52,13 +60,7 @@ library(ggplot2)
 
 library(readxl)
 
-library(tcltk)
-
-library(wrMisc)
-
 library(BLOOM)
-
-library(circlize)
 ```
 
 ### load scRNA-seq data
@@ -293,8 +295,6 @@ markers_filtered <- dplyr::filter(Integrated.markers, p_val_adj < 0.05)
 write.csv(markers_filtered, "./MarkerGenesByCluster_BLOOM.csv", row.names = FALSE)
 
 library(tidyverse)
-
-library(cowplot)
 
 library(ggplot2)
 
