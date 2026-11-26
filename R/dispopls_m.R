@@ -59,11 +59,11 @@ dispopls_m <- function(m, X, Y, xscale){
            axis.line = element_line(colour = "black"),
            axis.line.x=element_line(linetype=1,color="black",size=1),
            axis.line.y=element_line(linetype=1,color="black",size=1),
-           axis.ticks.y=element_line(color="black",size=1,lineend = 10),
-           axis.ticks.x=element_line(color="black",size=1,lineend = 1),
+           axis.ticks.y = element_line(color = "black", linewidth = 1, lineend = "butt"),
+           axis.ticks.x = element_line(color = "black", linewidth = 1, lineend = "butt"),
            axis.text = element_text(size = 14),
            axis.title = element_text(size = 14),
-           panel.border = element_rect(color = "black", fill = NA, size = 1.2))
+           panel.border = element_rect(color = "black", fill = NA, linewidth = 1.2))
   print(p1)
 
   ## significant variables
